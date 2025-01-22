@@ -1,0 +1,167 @@
+---
+title: "Introduction to usage of GPU resources"
+engine: knitr
+format:
+  revealjs:
+    theme: dark
+---
+
+# Overview
+
+I will give a demonstration of the various aspects involved when using
+GPUs to speed up training of deep learning models.
+
+I will talk a bit about 
+
+- Prerequisites
+- Need for speed
+- Tensorflow 
+- NVIDIA GPUs
+- CUDA, cuDNN
+- Python virtual environment
+
+# Prerequisites
+
+The terminal commands should be applicable.
+
+Requirements:
+
+- [UNIX user registration](https://foswikia.ux.uis.no/Info/UnixUserReg)
+- [UiS AI Lab registration](https://gpu.ux.uis.no/user_registration.php) 
+
+You also need to be able to log on to the UNIX server.
+
+- Using Virdual Desktop [Nomachine](https://foswikia.ux.uis.no/Info/NX) 
+- Terminal login with [SSH](https://foswiki.ux.uis.no/bin/view/Info/SshCommand) 
+
+
+# Deep learning
+
+Deep learning (DL) applications can involve 
+
+- millions of parameters to be trained
+- exhaustive hyperparameter searches
+
+# Need for speed
+
+Example where training a single model required 
+
+- Two hours to on an old computer without GPU support
+- Two minutes on UNIX server with GPU support
+
+## Tensorflow
+
+"[Tensorflow](https://en.wikipedia.org/wiki/TensorFlow) is a software library for machine learning and artificial
+intelligence"
+
+- "Mainly used for training and inference of neural networks".
+- "Developed by the Google Brain team for Google's internal use in
+  research and production"
+- "TensorFlow can be used in a wide variety of programming languages, including Python, JavaScript, C++, and Java"
+
+We focus on Python.
+
+## GPUS, CUDA and cuDNN
+
+On the UNIX server, the [Foswiki information
+resource](https://foswiki.ux.uis.no/bin/view/Info/WebHome), provides
+an overview of
+[Tungregning-servere](https://foswiki.ux.uis.no/bin/view/Info/TungRegning).
+
+## GPUS on the computation servers
+
+GPU types residing on UNIX-servers for computation, gorina4 and gorina6.
+ 
+- [NVIDIA Tesla P100](https://www.nvidia.com/en-in/data-center/tesla-p100/)
+- [NVIDIA Tesla V100](https://www.nvidia.com/en-gb/data-center/tesla-v100/) 
+  
+Requires manual reservation.
+
+## GPUS on the SLURM cluster
+
+GPU types residing on UNIX-servers gorina7, gorina8, gorina9.
+
+- [NVIDIA A100 Tensor Core GPU](https://www.nvidia.com/en-us/data-center/a100/)
+  
+Requires to use the SLURM-job-queue system on gorina11.
+
+
+## CUDA
+
+"The [NVIDIA® CUDA® Toolkit](https://developer.nvidia.com/cuda-toolkit) provides a development environment for
+creating high-performance, GPU-accelerated applications." 
+
+- "Develop, optimize, and deploy your applications on GPU-accelerated embedded systems"
+- "The toolkit includes GPU-accelerated libraries, debugging and
+  optimization tools",...
+  
+### cuDNN
+
+"The [NVIDIA CUDA® Deep Neural Network library (cuDNN)](https://developer.nvidia.com/cudnn) is a GPU-accelerated library of primitives for deep neural networks. 
+
+### TensorRT
+
+[NVIDIA® TensorRT™](https://developer.nvidia.com/tensorrt) is an ecosystem of APIs for high-performance deep learning inference. 
+
+# Demonstration
+We will look at an example, [Training a neural network on MNIST with
+Keras](https://www.tensorflow.org/datasets/keras_example).
+
+We will train a neural network to recognize handwritten numbers.
+
+ 
+
+For use of tensorflow, we refer to [Install TensorFlow with
+pip](https://www.tensorflow.org/install/pip) from the [tensorflow web
+pages](https://www.tensorflow.org).  Note that we are using `venv`
+instead of `conda` in the following example.
+
+## The numbers matters
+It is important to be aware of which versions of Python, tensorflow,
+CUDA, cuDNN and TensorRT you will be
+using. 
+
+Check [the compatibility table](https://www.tensorflow.org/install/source#gpu) to
+ensure you are using compatible versions of tensorflow, CUDA and
+cudnn. 
+
+For example, if you know you will be using tensorflow 2.12.0, the
+table tells you that it is compatible with 
+
+
+- Python 3.8-3.11. We will be using Python 3.10.
+- CUDA 11.8
+- cuDNN 8.6
+
+## Identifying available libraries
+
+Use the uenv-avail to see which librariies are available
+
+You can filter using grep 
+
+uenv-avail | grep -i miniconda | grep -i 310
+
+uenv-avail | grep -i cuda | grep -i 11.8
+uenv-avail | grep -i cudnn | grep 11. | grep 8.6
+uenv-avail | grep -i tensorrt | grep 11.x-8.6
+
+returning cuda-11.8.0, cudnn-11.x-8.6.0 and TensorRT-11.x-8.6-8.5.3.1,
+respectively.
+
+We will add these libraries to the `LD_LIBRARY_PATH` to make them
+available the environment applications.
+
+## Making the environment
+
+
+
+## What about PyTorch
+
+In the following example, we demonstrate both the manual reservation and SLURM system for running on the
+GPUs. For example using *PyTorch*, see the [MNIST demonstration](https://gitlab.ux.uis.no/unix/gpu).
+
+
+
+
+
+
