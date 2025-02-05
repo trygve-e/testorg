@@ -1,0 +1,578 @@
+* Setting up CUDA, cuDNN and python virtual environment with tensorflow
+
+** Emacs
+# Need to fix some public key issue (See Copilot log)
+sudo apt  install emacs-gtk
+
+
+** CUDA and cuDNN and TensorRT
+For CUDA and cuDNN check compatibility table at tensorflow's web page.
+For TensorRT, check [[https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html#trt_8][NVIDIATensorRT Documentation]], select version
+specific documentation,
+
+*** TensorRT
+e.g. [[https://docs.nvidia.com/deeplearning/tensorrt/archives/tensorrt-853/index.html][TensorRT v 8.53]]. Then check the [[https://docs.nvidia.com/deeplearning/tensorrt/archives/tensorrt-853/support-matrix/index.html][Support Matrix]] to verify that it
+supports the CUDA and cuDNN version you will use.  For example,
+TensorRT 8.53 supports CUDA 11.8 and cuDNN 8.6.  There is also a table
+showing the supported Hardware where you can see what precision is
+supported.  Then you can follow the guide for
+[[https://docs.nvidia.com/deeplearning/tensorrt/archives/tensorrt-853/install-guide/index.html][Installing TensorRT]].  Going to [[https://developer.nvidia.com/nvidia-tensorrt-8x-download][NVIDIA TensorRT 8.x Download]], you
+select the link for your architecture and installation type (TAR, DEB,
+RMP,...).  "The tar file provides more flexibility, such as installing
+multiple versions of TensorRT simultaneously. However, you must
+install the necessary dependencies and manage LD_LIBRARY_PATH
+yourself." For more information, refer to Tar File Installation.
+
+**** TAR File Installation
+You can follow instructions from the version you are going to install
+from the [[https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html#trt_8][Documentation Archives]].  We choose the [[https://docs.nvidia.com/deeplearning/tensorrt/archives/index.html#trt_8][NVIDIA TensorRT 8.5.3]]
+documentation and finally [[https://docs.nvidia.com/deeplearning/tensorrt/archives/tensorrt-853/install-guide/index.html#installing-tar][TAR File Installation]].
+
+At [[https://developer.nvidia.com/nvidia-tensorrt-8x-download][NVIDIA TensorRT 8.x Download]]. For x86_64 architecture and TAR package, download using the
+following link: [[https://developer.nvidia.com/downloads/compute/machine-learning/tensorrt/secure/8.5.3/tars/TensorRT-8.5.3.1.Linux.x86_64-gnu.cuda-11.8.cudnn8.6.tar.gz][TensorRT 8.5 GA Update 2 for Linux x86_64 and CUDA
+11.0, 11.1, 11.2, 11.3, 11.4, 11.5, 11.6, 11.7 and 11.8 TAR Package]]
+
+#+NAME: ls_download
+#+BEGIN_SRC shell :results drawer
+ls ~/snap/firefox/common/Downloads
+#+END_SRC
+
+#+RESULTS: ls_download
+:results:
+TensorRT-10.7.0.23.Linux.x86_64-gnu.cuda-11.8.tar.gz
+TensorRT-8.5.3.1.Linux.x86_64-gnu.cuda-11.8.cudnn8.6.tar.gz
+:end:
+
+#+NAME: move
+#+BEGIN_SRC shell :results drawer
+mv ~/snap/firefox/common/Downloads/TensorRT-8.5.3.1.Linux.x86_64-gnu.cuda-11.8.cudnn8.6.tar.gz ~/CUDA_cuDNN/.
+#+END_SRC
+
+#+RESULTS: move
+
+#+NAME: tar
+#+BEGIN_SRC shell :results drawer
+  cd ~/CUDA_cuDNN
+  tar -xzvf TensorRT-8.5.3.1.Linux.x86_64-gnu.cuda-11.8.cudnn8.6.tar.gz
+#+END_SRC
+
+#+RESULTS: tar
+:results:
+TensorRT-8.5.3.1/
+TensorRT-8.5.3.1/uff/
+TensorRT-8.5.3.1/uff/uff-0.6.9-py2.py3-none-any.whl
+TensorRT-8.5.3.1/doc/
+TensorRT-8.5.3.1/doc/Acknowledgements.txt
+TensorRT-8.5.3.1/doc/Readme.txt
+TensorRT-8.5.3.1/data/
+TensorRT-8.5.3.1/data/faster-rcnn/
+TensorRT-8.5.3.1/data/faster-rcnn/faster_rcnn_test_iplugin.prototxt
+TensorRT-8.5.3.1/data/faster-rcnn/000542.ppm
+TensorRT-8.5.3.1/data/faster-rcnn/001150.ppm
+TensorRT-8.5.3.1/data/faster-rcnn/000456.ppm
+TensorRT-8.5.3.1/data/faster-rcnn/004545.ppm
+TensorRT-8.5.3.1/data/faster-rcnn/tensor_range.txt
+TensorRT-8.5.3.1/data/faster-rcnn/001763.ppm
+TensorRT-8.5.3.1/data/mnist/
+TensorRT-8.5.3.1/data/mnist/deploy.prototxt
+TensorRT-8.5.3.1/data/mnist/5.pgm
+TensorRT-8.5.3.1/data/mnist/1.pgm
+TensorRT-8.5.3.1/data/mnist/mnist.prototxt
+TensorRT-8.5.3.1/data/mnist/README.md
+TensorRT-8.5.3.1/data/mnist/2.pgm
+TensorRT-8.5.3.1/data/mnist/0.pgm
+TensorRT-8.5.3.1/data/mnist/mnistgie.wts
+TensorRT-8.5.3.1/data/mnist/mnistapi.wts
+TensorRT-8.5.3.1/data/mnist/4.pgm
+TensorRT-8.5.3.1/data/mnist/mnist.caffemodel
+TensorRT-8.5.3.1/data/mnist/6.pgm
+TensorRT-8.5.3.1/data/mnist/lenet5_custom_pool.uff.txt
+TensorRT-8.5.3.1/data/mnist/lenet5.uff.txt
+TensorRT-8.5.3.1/data/mnist/lenet5_mnist_frozen.pb
+TensorRT-8.5.3.1/data/mnist/mnist_lenet.caffemodel
+TensorRT-8.5.3.1/data/mnist/9.pgm
+TensorRT-8.5.3.1/data/mnist/mnist_mean.binaryproto
+TensorRT-8.5.3.1/data/mnist/lenet5.uff
+TensorRT-8.5.3.1/data/mnist/mnist.onnx
+TensorRT-8.5.3.1/data/mnist/3.pgm
+TensorRT-8.5.3.1/data/mnist/7.pgm
+TensorRT-8.5.3.1/data/mnist/lenet5_custom_pool.uff
+TensorRT-8.5.3.1/data/mnist/8.pgm
+TensorRT-8.5.3.1/data/int8_api/
+TensorRT-8.5.3.1/data/int8_api/README.md
+TensorRT-8.5.3.1/data/int8_api/airliner.ppm
+TensorRT-8.5.3.1/data/int8_api/resnet50_per_tensor_dynamic_range.txt
+TensorRT-8.5.3.1/data/int8_api/reference_labels.txt
+TensorRT-8.5.3.1/data/googlenet/
+TensorRT-8.5.3.1/data/googlenet/googlenet.caffemodel
+TensorRT-8.5.3.1/data/googlenet/googlenet.prototxt
+TensorRT-8.5.3.1/data/googlenet/README.md
+TensorRT-8.5.3.1/data/resnet50/
+TensorRT-8.5.3.1/data/resnet50/ResNet50_N2.prototxt
+TensorRT-8.5.3.1/data/resnet50/ResNet50_fp32.caffemodel
+TensorRT-8.5.3.1/data/resnet50/ResNet50.onnx
+TensorRT-8.5.3.1/data/resnet50/README.md
+TensorRT-8.5.3.1/data/resnet50/tabby_tiger_cat.jpg
+TensorRT-8.5.3.1/data/resnet50/airliner.ppm
+TensorRT-8.5.3.1/data/resnet50/resnet50-infer-5.uff
+TensorRT-8.5.3.1/data/resnet50/binoculars.jpeg
+TensorRT-8.5.3.1/data/resnet50/class_labels.txt
+TensorRT-8.5.3.1/data/resnet50/reflex_camera.jpeg
+TensorRT-8.5.3.1/data/char-rnn/
+TensorRT-8.5.3.1/data/char-rnn/model/
+TensorRT-8.5.3.1/data/char-rnn/model/model-20080.data-00000-of-00001
+TensorRT-8.5.3.1/data/char-rnn/model/model-20080.index
+TensorRT-8.5.3.1/data/char-rnn/model/checkpoint
+TensorRT-8.5.3.1/data/char-rnn/model/model-20080.meta
+TensorRT-8.5.3.1/data/char-rnn/char-rnn.wts
+TensorRT-8.5.3.1/data/ssd/
+TensorRT-8.5.3.1/data/ssd/bus.ppm
+TensorRT-8.5.3.1/data/ssd/dog.ppm
+TensorRT-8.5.3.1/data/ssd/ssd_coco_labels.txt
+TensorRT-8.5.3.1/data/ssd/batches/
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration32.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration40.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration31.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration23.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration37.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration10.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration6.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration26.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration19.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration3.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration49.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration7.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration48.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration48.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration47.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration27.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration14.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration45.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration18.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration11.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration34.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration18.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration1.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration35.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration6.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration37.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration41.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration16.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration7.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration0.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration15.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration5.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration29.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration13.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration17.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration21.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration39.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration8.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration24.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration35.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration17.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration19.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration34.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration22.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration2.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration5.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration33.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration1.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration45.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration30.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration2.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration10.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration12.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration38.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration28.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration0.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration32.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration4.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration42.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration27.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration12.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration46.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration25.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration25.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration15.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration44.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration26.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration20.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration9.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration41.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration33.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration16.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration29.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration14.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration47.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration4.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration38.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration42.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration20.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration36.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration44.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration13.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration3.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration46.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration23.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration40.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration24.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration22.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration36.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration9.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration30.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration43.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration43.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration28.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration31.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration21.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration39.batch
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration8.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration11.list
+TensorRT-8.5.3.1/data/ssd/batches/batch_calibration49.list
+TensorRT-8.5.3.1/lib
+TensorRT-8.5.3.1/onnx_graphsurgeon/
+TensorRT-8.5.3.1/onnx_graphsurgeon/onnx_graphsurgeon-0.3.12-py2.py3-none-any.whl
+TensorRT-8.5.3.1/targets/
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvinfer.so
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvinfer_plugin.so.8.5.3
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvinfer_plugin_static.a
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvcaffe_parser.so.8
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvcaffe_parser.so
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/stubs/
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/stubs/libnvinfer.so
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/stubs/libnvonnxparser.so
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/stubs/libnvinfer_plugin.so
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/stubs/libnvparsers.so
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvinfer_static.a
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvonnxparser.so.8.5.3
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvinfer.so.8
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvparsers.so.8.5.3
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvonnxparser.so
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvinfer_builder_resource.so.8.5.3
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvcaffe_parser.so.8.5.3
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvonnxparser.so.8
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvparsers.so.8
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvinfer_plugin.so
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvonnxparser_static.a
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvparsers_static.a
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libonnx_proto.a
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvinfer.so.8.5.3
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvparsers.so
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvcaffe_parser.a
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/lib/libnvinfer_plugin.so.8
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/include
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/samples
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/bin/
+TensorRT-8.5.3.1/targets/x86_64-linux-gnu/bin/trtexec
+TensorRT-8.5.3.1/graphsurgeon/
+TensorRT-8.5.3.1/graphsurgeon/graphsurgeon-0.4.6-py2.py3-none-any.whl
+TensorRT-8.5.3.1/include/
+TensorRT-8.5.3.1/include/NvInferRuntimeCommon.h
+TensorRT-8.5.3.1/include/NvInfer.h
+TensorRT-8.5.3.1/include/NvInferImpl.h
+TensorRT-8.5.3.1/include/NvInferSafeRuntime.h
+TensorRT-8.5.3.1/include/NvOnnxParser.h
+TensorRT-8.5.3.1/include/NvCaffeParser.h
+TensorRT-8.5.3.1/include/NvUtils.h
+TensorRT-8.5.3.1/include/NvInferVersion.h
+TensorRT-8.5.3.1/include/NvInferConsistencyImpl.h
+TensorRT-8.5.3.1/include/NvInferPlugin.h
+TensorRT-8.5.3.1/include/NvOnnxConfig.h
+TensorRT-8.5.3.1/include/NvInferPluginUtils.h
+TensorRT-8.5.3.1/include/NvInferLegacyDims.h
+TensorRT-8.5.3.1/include/NvUffParser.h
+TensorRT-8.5.3.1/include/NvInferRuntime.h
+TensorRT-8.5.3.1/include/NvInferConsistency.h
+TensorRT-8.5.3.1/samples/
+TensorRT-8.5.3.1/samples/sampleCharRNN/
+TensorRT-8.5.3.1/samples/sampleCharRNN/README.md
+TensorRT-8.5.3.1/samples/sampleCharRNN/sampleCharRNN.cpp
+TensorRT-8.5.3.1/samples/sampleCharRNN/Makefile
+TensorRT-8.5.3.1/samples/sampleAlgorithmSelector/
+TensorRT-8.5.3.1/samples/sampleAlgorithmSelector/sampleAlgorithmSelector.cpp
+TensorRT-8.5.3.1/samples/sampleAlgorithmSelector/README.md
+TensorRT-8.5.3.1/samples/sampleAlgorithmSelector/Makefile
+TensorRT-8.5.3.1/samples/common/
+TensorRT-8.5.3.1/samples/common/sampleInference.h
+TensorRT-8.5.3.1/samples/common/half.h
+TensorRT-8.5.3.1/samples/common/buffers.h
+TensorRT-8.5.3.1/samples/common/common.h
+TensorRT-8.5.3.1/samples/common/sampleInference.cpp
+TensorRT-8.5.3.1/samples/common/sampleEngines.h
+TensorRT-8.5.3.1/samples/common/sampleConfig.h
+TensorRT-8.5.3.1/samples/common/ErrorRecorder.h
+TensorRT-8.5.3.1/samples/common/logging.h
+TensorRT-8.5.3.1/samples/common/sampleUtils.cpp
+TensorRT-8.5.3.1/samples/common/parserOnnxConfig.h
+TensorRT-8.5.3.1/samples/common/sampleEngines.cpp
+TensorRT-8.5.3.1/samples/common/logger.h
+TensorRT-8.5.3.1/samples/common/EntropyCalibrator.h
+TensorRT-8.5.3.1/samples/common/dumpTFWts.py
+TensorRT-8.5.3.1/samples/common/logger.cpp
+TensorRT-8.5.3.1/samples/common/getOptions.h
+TensorRT-8.5.3.1/samples/common/safeCommon.h
+TensorRT-8.5.3.1/samples/common/sampleDevice.h
+TensorRT-8.5.3.1/samples/common/getOptions.cpp
+TensorRT-8.5.3.1/samples/common/sampleUtils.h
+TensorRT-8.5.3.1/samples/common/sampleReporting.h
+TensorRT-8.5.3.1/samples/common/sampleOptions.cpp
+TensorRT-8.5.3.1/samples/common/sampleOptions.h
+TensorRT-8.5.3.1/samples/common/BatchStream.h
+TensorRT-8.5.3.1/samples/common/argsParser.h
+TensorRT-8.5.3.1/samples/common/sampleReporting.cpp
+TensorRT-8.5.3.1/samples/sampleINT8API/
+TensorRT-8.5.3.1/samples/sampleINT8API/README.md
+TensorRT-8.5.3.1/samples/sampleINT8API/Makefile
+TensorRT-8.5.3.1/samples/sampleINT8API/sampleINT8API.cpp
+TensorRT-8.5.3.1/samples/sampleIOFormats/
+TensorRT-8.5.3.1/samples/sampleIOFormats/README.md
+TensorRT-8.5.3.1/samples/sampleIOFormats/sampleIOFormats.cpp
+TensorRT-8.5.3.1/samples/sampleIOFormats/Makefile
+TensorRT-8.5.3.1/samples/Makefile.config
+TensorRT-8.5.3.1/samples/fatbin.ld
+TensorRT-8.5.3.1/samples/sampleOnnxMnistCoordConvAC/
+TensorRT-8.5.3.1/samples/sampleOnnxMnistCoordConvAC/mnist_coord_conv_train.py
+TensorRT-8.5.3.1/samples/sampleOnnxMnistCoordConvAC/README.md
+TensorRT-8.5.3.1/samples/sampleOnnxMnistCoordConvAC/modify_onnx_ac.py
+TensorRT-8.5.3.1/samples/sampleOnnxMnistCoordConvAC/coord_conv.py
+TensorRT-8.5.3.1/samples/sampleOnnxMnistCoordConvAC/Makefile
+TensorRT-8.5.3.1/samples/sampleOnnxMnistCoordConvAC/sampleOnnxMnistCoordConvAC.cpp
+TensorRT-8.5.3.1/samples/sampleNamedDimensions/
+TensorRT-8.5.3.1/samples/sampleNamedDimensions/create_model.py
+TensorRT-8.5.3.1/samples/sampleNamedDimensions/README.md
+TensorRT-8.5.3.1/samples/sampleNamedDimensions/sampleNamedDimensions.cpp
+TensorRT-8.5.3.1/samples/sampleNamedDimensions/Makefile
+TensorRT-8.5.3.1/samples/sampleDynamicReshape/
+TensorRT-8.5.3.1/samples/sampleDynamicReshape/README.md
+TensorRT-8.5.3.1/samples/sampleDynamicReshape/sampleDynamicReshape.cpp
+TensorRT-8.5.3.1/samples/sampleDynamicReshape/Makefile
+TensorRT-8.5.3.1/samples/Makefile
+TensorRT-8.5.3.1/samples/sampleOnnxMNIST/
+TensorRT-8.5.3.1/samples/sampleOnnxMNIST/sampleOnnxMNIST.cpp
+TensorRT-8.5.3.1/samples/sampleOnnxMNIST/README.md
+TensorRT-8.5.3.1/samples/sampleOnnxMNIST/Makefile
+TensorRT-8.5.3.1/samples/trtexec/
+TensorRT-8.5.3.1/samples/trtexec/profiler.py
+TensorRT-8.5.3.1/samples/trtexec/README.md
+TensorRT-8.5.3.1/samples/trtexec/trtexec.cpp
+TensorRT-8.5.3.1/samples/trtexec/prn_utils.py
+TensorRT-8.5.3.1/samples/trtexec/Makefile
+TensorRT-8.5.3.1/samples/trtexec/tracer.py
+TensorRT-8.5.3.1/samples/python/
+TensorRT-8.5.3.1/samples/python/onnx_packnet/
+TensorRT-8.5.3.1/samples/python/onnx_packnet/README.md
+TensorRT-8.5.3.1/samples/python/onnx_packnet/download.yml
+TensorRT-8.5.3.1/samples/python/onnx_packnet/convert_to_onnx.py
+TensorRT-8.5.3.1/samples/python/onnx_packnet/post_processing.py
+TensorRT-8.5.3.1/samples/python/onnx_packnet/requirements.txt
+TensorRT-8.5.3.1/samples/python/common.py
+TensorRT-8.5.3.1/samples/python/README.md
+TensorRT-8.5.3.1/samples/python/detectron2/
+TensorRT-8.5.3.1/samples/python/detectron2/eval_coco.py
+TensorRT-8.5.3.1/samples/python/detectron2/README.md
+TensorRT-8.5.3.1/samples/python/detectron2/create_onnx.py
+TensorRT-8.5.3.1/samples/python/detectron2/visualize.py
+TensorRT-8.5.3.1/samples/python/detectron2/onnx_utils.py
+TensorRT-8.5.3.1/samples/python/detectron2/infer.py
+TensorRT-8.5.3.1/samples/python/detectron2/build_engine.py
+TensorRT-8.5.3.1/samples/python/detectron2/requirements.txt
+TensorRT-8.5.3.1/samples/python/detectron2/image_batcher.py
+TensorRT-8.5.3.1/samples/python/introductory_parser_samples/
+TensorRT-8.5.3.1/samples/python/introductory_parser_samples/README.md
+TensorRT-8.5.3.1/samples/python/introductory_parser_samples/onnx_resnet50.py
+TensorRT-8.5.3.1/samples/python/introductory_parser_samples/requirements.txt
+TensorRT-8.5.3.1/samples/python/efficientdet/
+TensorRT-8.5.3.1/samples/python/efficientdet/eval_coco.py
+TensorRT-8.5.3.1/samples/python/efficientdet/README.md
+TensorRT-8.5.3.1/samples/python/efficientdet/labels_coco.txt
+TensorRT-8.5.3.1/samples/python/efficientdet/create_onnx.py
+TensorRT-8.5.3.1/samples/python/efficientdet/visualize.py
+TensorRT-8.5.3.1/samples/python/efficientdet/onnx_utils.py
+TensorRT-8.5.3.1/samples/python/efficientdet/infer.py
+TensorRT-8.5.3.1/samples/python/efficientdet/build_engine.py
+TensorRT-8.5.3.1/samples/python/efficientdet/infer_tf.py
+TensorRT-8.5.3.1/samples/python/efficientdet/compare_tf.py
+TensorRT-8.5.3.1/samples/python/efficientdet/requirements.txt
+TensorRT-8.5.3.1/samples/python/efficientdet/image_batcher.py
+TensorRT-8.5.3.1/samples/python/downloader.py
+TensorRT-8.5.3.1/samples/python/network_api_pytorch_mnist/
+TensorRT-8.5.3.1/samples/python/network_api_pytorch_mnist/sample.py
+TensorRT-8.5.3.1/samples/python/network_api_pytorch_mnist/README.md
+TensorRT-8.5.3.1/samples/python/network_api_pytorch_mnist/model.py
+TensorRT-8.5.3.1/samples/python/network_api_pytorch_mnist/requirements.txt
+TensorRT-8.5.3.1/samples/python/efficientnet/
+TensorRT-8.5.3.1/samples/python/efficientnet/README.md
+TensorRT-8.5.3.1/samples/python/efficientnet/create_onnx.py
+TensorRT-8.5.3.1/samples/python/efficientnet/eval_gt.py
+TensorRT-8.5.3.1/samples/python/efficientnet/infer.py
+TensorRT-8.5.3.1/samples/python/efficientnet/build_engine.py
+TensorRT-8.5.3.1/samples/python/efficientnet/compare_tf.py
+TensorRT-8.5.3.1/samples/python/efficientnet/requirements.txt
+TensorRT-8.5.3.1/samples/python/efficientnet/image_batcher.py
+TensorRT-8.5.3.1/samples/python/engine_refit_onnx_bidaf/
+TensorRT-8.5.3.1/samples/python/engine_refit_onnx_bidaf/README.md
+TensorRT-8.5.3.1/samples/python/engine_refit_onnx_bidaf/download.yml
+TensorRT-8.5.3.1/samples/python/engine_refit_onnx_bidaf/build_and_refit_engine.py
+TensorRT-8.5.3.1/samples/python/engine_refit_onnx_bidaf/prepare_model.py
+TensorRT-8.5.3.1/samples/python/engine_refit_onnx_bidaf/data_processing.py
+TensorRT-8.5.3.1/samples/python/engine_refit_onnx_bidaf/requirements.txt
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/eval_coco.py
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/README.md
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/labels_coco.txt
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/create_onnx.py
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/visualize.py
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/onnx_utils.py
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/infer.py
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/build_engine.py
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/compare_tf.py
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/requirements.txt
+TensorRT-8.5.3.1/samples/python/tensorflow_object_detection_api/image_batcher.py
+TensorRT-8.5.3.1/samples/python/onnx_custom_plugin/
+TensorRT-8.5.3.1/samples/python/onnx_custom_plugin/sample.py
+TensorRT-8.5.3.1/samples/python/onnx_custom_plugin/README.md
+TensorRT-8.5.3.1/samples/python/onnx_custom_plugin/CMakeLists.txt
+TensorRT-8.5.3.1/samples/python/onnx_custom_plugin/test_custom_hardmax_plugin.py
+TensorRT-8.5.3.1/samples/python/onnx_custom_plugin/model.py
+TensorRT-8.5.3.1/samples/python/onnx_custom_plugin/load_plugin_lib.py
+TensorRT-8.5.3.1/samples/python/onnx_custom_plugin/plugin/
+TensorRT-8.5.3.1/samples/python/onnx_custom_plugin/plugin/customHardmaxPlugin.cpp
+TensorRT-8.5.3.1/samples/python/onnx_custom_plugin/plugin/customHardmaxPlugin.h
+TensorRT-8.5.3.1/samples/python/onnx_custom_plugin/requirements.txt
+TensorRT-8.5.3.1/samples/python/yolov3_onnx/
+TensorRT-8.5.3.1/samples/python/yolov3_onnx/coco_labels.txt
+TensorRT-8.5.3.1/samples/python/yolov3_onnx/README.md
+TensorRT-8.5.3.1/samples/python/yolov3_onnx/download.yml
+TensorRT-8.5.3.1/samples/python/yolov3_onnx/yolov3_to_onnx.py
+TensorRT-8.5.3.1/samples/python/yolov3_onnx/data_processing.py
+TensorRT-8.5.3.1/samples/python/yolov3_onnx/onnx_to_tensorrt.py
+TensorRT-8.5.3.1/samples/python/yolov3_onnx/requirements.txt
+TensorRT-8.5.3.1/samples/python/requirements.txt
+TensorRT-8.5.3.1/bin
+TensorRT-8.5.3.1/python/
+TensorRT-8.5.3.1/python/tensorrt-8.5.3.1-cp310-none-linux_x86_64.whl
+TensorRT-8.5.3.1/python/tensorrt-8.5.3.1-cp36-none-linux_x86_64.whl
+TensorRT-8.5.3.1/python/tensorrt-8.5.3.1-cp38-none-linux_x86_64.whl
+TensorRT-8.5.3.1/python/tensorrt-8.5.3.1-cp37-none-linux_x86_64.whl
+TensorRT-8.5.3.1/python/tensorrt-8.5.3.1-cp39-none-linux_x86_64.whl
+:end:
+
+#+NAME: ls_tar
+#+BEGIN_SRC shell :results drawer
+  cd ~/CUDA_cuDNN
+  ls TensorRT-8.5.3.1
+#+END_SRC
+
+#+RESULTS: ls_tar
+:results:
+bin
+data
+doc
+graphsurgeon
+include
+lib
+onnx_graphsurgeon
+python
+samples
+targets
+uff
+:end:
+
+#+NAME: export
+#+BEGIN_SRC shell :results drawer
+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/trygve/CUDA_cuDNN/TensorRT-8.5.3.1/lib
+#+END_SRC
+
+** CUDA
+#+NAME: export_cuda
+#+BEGIN_SRC shell :results drawer
+    export PATH=/usr/local/cuda/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+#+END_SRC
+#+END_SRC
+
+
+sudo apt upgrade
+nvidia-smi
+wget https://developer.download.nvidia.com/compute/cudnn/redist/cudnn_samples/linux-x86_64/cudnn_samples-linux-x86_64-8.6.0.163_cuda11-archive.tar.xz
+wget https://developer.download.nvidia.com/compute/cudnn/redist/cudnn/linux-x86_64/cudnn-linux-x86_64-8.6.0.163_cuda11-archive.tar.xz
+wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
+sudo apt install nautilus
+mkdir CUDA_cuDNN
+mv *run CUDA_cuDNN/.
+mv *tar.xz CUDA_cuDNN/.
+cd CUDA_cuDNN/
+sudo sh cuda_11.8.0_520.61.05_linux.run
+emacs /var/log/cuda-installer.log &
+sudo apt install build-essential
+gcc --version
+sudo sh cuda_11.8.0_520.61.05_linux.run
+/usr/local/cuda/extras/demo_suite/deviceQuery
+emacs .profile &
+echo $PATH
+echo $LD_LIBRARY_PATH
+cd CUDA_cuDNN/
+ls
+tar xf cudnn-linux-x86_64-8.6.0.163_cuda11-archive.tar.xz
+ls
+sudo ln -s cudnn-linux-x86_64-8.6.0.163_cuda11-archive cudnn
+sudo cp cudnn/lib/* /usr/local/cuda/lib64/.
+sudo cp cudnn/include/* /usr/local/cuda/include/.
+tar xf cudnn_samples-linux-x86_64-8.6.0.163_cuda11-archive.tar.xz
+sudo ln -s cudnn_samples-linux-x86_64-8.6.0.163_cuda11-archive cudnn_samples
+cd cudnn_samples/src/cudnn_samples_v9/mnistCUDNN/
+cd cudnn_samples/src/cudnn_samples_v8/mnistCUDNN/
+make
+sudo apt-get install libfreeimage3 libfreeimage-dev
+make
+mnistCUDNN
+nvidia-smi
+nvcc --version
+export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+mnistCUDNN
+
+** Nextcloud
+sudo apt install nextcloud-desktop
+nextcloud &
+sshfs
+mkdir ux
+ls
+mkdir ux/EKG
+mkdir ux/trygve-e
+mkdir ux/bhome
+sudo ln -s ~/Nextcloud/projects/ ~/projects
+sudo apt install sshfs
+sudo emacs /etc/fuse.conf &
+
+** Python virtual environment
+sudo apt install python3.10-venv
+python3.10 -m venv ~/.venv/rhythms
+source ~/.venv/rhythms/bin/activate
+cd projects/python/rhythms/
+pip install --upgrade pip
+
+pip install tensorflow==2.12
+
+pip install --upgrade 'jupyter-server<2.0.0'
+pip install notebook
+pip install ipykernel
+python -m ipykernel install --user --name rhythms --display-name "Python (rhythms)"
+pip install matplotlib
+pip install dataclasses_json
+pip install pandas
+pip install seaborn
+pip install scikit-learn
+
+pip freeze > requirements_wsl.txt
+
+** Libraries
+mkdir /home/trygve/.cache/pycache
+export PYTHONPYCACHEPREFIX=/home/trygve/.cache/pycache
+export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+
+sshfs trygve-e@ssh2.ux.uis.no:/home/prosjekt/BMDLab/ ~/ux/EKG -o allow_other
+sudo ln -s /mnt/wsl/ux/bhome /home/prosjekt/BMDLab
+sudo ln -s /mnt/wsl/ux/EKG /home/prosjekt/BMDLab
